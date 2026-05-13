@@ -39,7 +39,7 @@ export const handlers = [
     const session = sessions.find((s) => s.id === params.id)
     if (!session) {
       return HttpResponse.json(
-        { code: 'NOT_FOUND', message: 'Session not found' },
+        { code: 'NOT_FOUND', message: '找不到這筆訓練紀錄' },
         { status: 404 }
       )
     }
@@ -64,7 +64,7 @@ export const handlers = [
     const idx = sessions.findIndex((s) => s.id === params.id)
     if (idx === -1) {
       return HttpResponse.json(
-        { code: 'NOT_FOUND', message: 'Session not found' },
+        { code: 'NOT_FOUND', message: '找不到這筆訓練紀錄' },
         { status: 404 }
       )
     }
@@ -76,7 +76,7 @@ export const handlers = [
     const idx = sessions.findIndex((s) => s.id === params.id)
     if (idx === -1) {
       return HttpResponse.json(
-        { code: 'NOT_FOUND', message: 'Session not found' },
+        { code: 'NOT_FOUND', message: '找不到這筆訓練紀錄' },
         { status: 404 }
       )
     }

@@ -45,7 +45,7 @@ export default function DashboardPage() {
         </div>
       )}
       {summaryError && (
-        <ErrorState message="Failed to load summary" onRetry={() => void refetchSummary()} />
+        <ErrorState message="摘要載入失敗" onRetry={() => void refetchSummary()} />
       )}
       {summary && <SummaryCards summary={summary} />}
 
@@ -82,10 +82,10 @@ export default function DashboardPage() {
 
         {sessionsLoading && <SkeletonCard />}
         {sessionsError && (
-          <ErrorState message="Failed to load sessions" onRetry={() => void refetchSessions()} />
+          <ErrorState message="訓練紀錄載入失敗" onRetry={() => void refetchSessions()} />
         )}
         {!sessionsLoading && !sessionsError && sessions.length === 0 && (
-          <EmptyState message="No sessions match your filters" />
+          <EmptyState message="沒有符合篩選條件的訓練紀錄" />
         )}
         {!sessionsLoading && sessions.length > 0 && (
           <SessionTable sessions={sessions} onDelete={handleDelete} />

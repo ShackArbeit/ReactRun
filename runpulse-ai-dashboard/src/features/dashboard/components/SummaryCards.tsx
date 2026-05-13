@@ -16,7 +16,7 @@ const MetricCard = memo(function MetricCard({ label, value, unit, icon, color }:
       <div className={`rounded-lg p-2.5 text-xl ${color}`}>{icon}</div>
       <div className="min-w-0">
         <p className="text-xs text-gray-400 mb-1">{label}</p>
-        <p className="text-2xl font-bold text-white">
+        <p className="text-2xl font-bold text-slate-100">
           {value}
           {unit && <span className="text-sm font-normal text-gray-400 ml-1">{unit}</span>}
         </p>
@@ -34,32 +34,32 @@ export const SummaryCards = memo(function SummaryCards({ summary }: SummaryCards
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard
-        label="Total Distance"
+        label="總距離"
         value={summary.totalDistanceKm}
-        unit="km"
+        unit="公里"
         icon="📏"
-        color="bg-cyan-500/20"
+        color="bg-slate-700 text-slate-200"
       />
       <MetricCard
-        label="Weekly Load"
+        label="週訓練負荷"
         value={summary.weeklyLoad}
-        unit="au"
+        unit="點"
         icon="⚡"
-        color="bg-purple-500/20"
+        color="bg-slate-700 text-slate-200"
       />
       <MetricCard
-        label="Avg Pace"
+        label="平均配速"
         value={summary.avgPace}
-        unit="/km"
+        unit="/公里"
         icon="⏱"
-        color="bg-green-500/20"
+        color="bg-slate-700 text-slate-200"
       />
       <MetricCard
-        label="Recovery Score"
+        label="恢復分數"
         value={summary.recoveryScore}
         unit="/100"
         icon="💚"
-        color="bg-emerald-500/20"
+        color="bg-slate-700 text-slate-200"
       />
     </div>
   )

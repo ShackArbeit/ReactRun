@@ -24,26 +24,26 @@ export const TrainingTrendChart = memo(function TrainingTrendChart({
 
     return {
       backgroundColor: 'transparent',
-      tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#cbd5e1' } },
-      legend: { data: ['Distance (km)', 'Training Load'], textStyle: { color: '#94a3b8' }, top: 8 },
+      tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#475569', textStyle: { color: '#cbd5e1' } },
+      legend: { data: ['距離（公里）', '訓練負荷'], textStyle: { color: '#94a3b8' }, top: 8 },
       grid: { left: 40, right: 20, top: 48, bottom: 32, containLabel: false },
       xAxis: {
         type: 'category',
         data: dates,
-        axisLine: { lineStyle: { color: '#334155' } },
+        axisLine: { lineStyle: { color: '#475569' } },
         axisLabel: { color: '#64748b', fontSize: 11 },
       },
       yAxis: [
         {
           type: 'value',
-          name: 'km',
+          name: '公里',
           nameTextStyle: { color: '#64748b' },
           axisLabel: { color: '#64748b', fontSize: 11 },
-          splitLine: { lineStyle: { color: '#1e293b' } },
+          splitLine: { lineStyle: { color: '#334155' } },
         },
         {
           type: 'value',
-          name: 'load',
+          name: '負荷',
           nameTextStyle: { color: '#64748b' },
           axisLabel: { color: '#64748b', fontSize: 11 },
           splitLine: { show: false },
@@ -51,21 +51,21 @@ export const TrainingTrendChart = memo(function TrainingTrendChart({
       ],
       series: [
         {
-          name: 'Distance (km)',
+          name: '距離（公里）',
           type: 'bar',
           data: distances,
-          itemStyle: { color: '#06b6d4', borderRadius: [4, 4, 0, 0] },
+          itemStyle: { color: '#64748b', borderRadius: [4, 4, 0, 0] },
           barMaxWidth: 32,
         },
         {
-          name: 'Training Load',
+          name: '訓練負荷',
           type: 'line',
           yAxisIndex: 1,
           data: loads,
           smooth: true,
-          lineStyle: { color: '#a855f7', width: 2 },
-          itemStyle: { color: '#a855f7' },
-          areaStyle: { color: 'rgba(168,85,247,0.08)' },
+          lineStyle: { color: '#475569', width: 2 },
+          itemStyle: { color: '#475569' },
+          areaStyle: { color: 'rgba(71,85,105,0.08)' },
           symbol: 'circle',
           symbolSize: 5,
         },
@@ -90,7 +90,7 @@ export const TrainingTrendChart = memo(function TrainingTrendChart({
 
   return (
     <Card className="p-5">
-      <h3 className="text-sm font-semibold text-gray-300 mb-4">Training Trend</h3>
+      <h3 className="text-sm font-semibold text-gray-300 mb-4">訓練趨勢</h3>
       <div ref={chartRef} style={{ height: 240, width: '100%' }} />
     </Card>
   )

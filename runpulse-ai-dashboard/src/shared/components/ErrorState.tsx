@@ -3,7 +3,7 @@ interface ErrorStateProps {
   onRetry?: () => void
 }
 
-export function ErrorState({ message = 'Something went wrong', onRetry }: ErrorStateProps) {
+export function ErrorState({ message = '發生錯誤', onRetry }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
       <div className="text-4xl">⚠️</div>
@@ -11,9 +11,9 @@ export function ErrorState({ message = 'Something went wrong', onRetry }: ErrorS
       {onRetry && (
         <button
           onClick={onRetry}
-          className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors"
+          className="rounded-lg bg-slate-800 px-4 py-2 text-sm text-slate-100 hover:bg-slate-700 transition-colors"
         >
-          Try again
+          重試
         </button>
       )}
     </div>

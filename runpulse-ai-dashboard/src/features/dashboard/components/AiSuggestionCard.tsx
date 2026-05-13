@@ -7,9 +7,15 @@ interface AiSuggestionCardProps {
 }
 
 const fatigueBadge = {
-  low: 'bg-green-500/20 text-green-400',
-  medium: 'bg-yellow-500/20 text-yellow-400',
-  high: 'bg-red-500/20 text-red-400',
+  low: 'bg-slate-700 text-slate-300',
+  medium: 'bg-slate-700 text-slate-200',
+  high: 'bg-slate-700 text-slate-100',
+}
+
+const fatigueLabel = {
+  low: '低',
+  medium: '中',
+  high: '高',
 }
 
 export const AiSuggestionCard = memo(function AiSuggestionCard({
@@ -20,12 +26,12 @@ export const AiSuggestionCard = memo(function AiSuggestionCard({
     <Card className="p-5">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">🤖</span>
-        <span className="text-sm font-semibold text-cyan-400">AI Coach Insight</span>
+        <span className="text-sm font-semibold text-slate-300">智慧教練建議</span>
         <span className={`ml-auto rounded-full px-2.5 py-0.5 text-xs font-medium ${fatigueBadge[fatigueLevel]}`}>
-          Fatigue: {fatigueLevel}
+          疲勞：{fatigueLabel[fatigueLevel]}
         </span>
       </div>
-      <p className="text-sm text-gray-300 leading-relaxed">{suggestion}</p>
+      <p className="text-sm leading-relaxed text-slate-300">{suggestion}</p>
     </Card>
   )
 })

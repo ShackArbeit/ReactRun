@@ -78,9 +78,11 @@ GitHub Actions 需要負責：
 
 - vite.config.ts 的 base 是否需要調整
 - 如果 repo 不是 username.github.io，是否需要 base: '/repo-name/'
+- 請根據目前 repository 名稱直接判斷，不要只給通用建議
 - README 是否有寫清楚
 - 是否有 SPA route refresh 404 問題
 - 如果有 React Router，是否需要 HashRouter 或 fallback 策略
+- BrowserRouter + GitHub Pages 的限制是否被正確處理
 
 5. 面試說法
 
@@ -107,6 +109,7 @@ GitHub Actions 需要負責：
 - 影響
 - 修改建議
 - code patch
+- 若部署設定有問題，請直接給出可部署版本
 
 ## Should Improve
 
@@ -115,6 +118,14 @@ GitHub Actions 需要負責：
 ## Security and Maintainability Notes
 
 請檢查是否有安全性或維護性問題。
+
+## Evidence
+
+請列出：
+
+- 你實際檢查了哪些檔案
+- 哪些結論是來自 workflow / Dockerfile / Vite 設定本身
+- 哪些結論需要依實際 GitHub repo 名稱或 Pages URL 決定
 
 ## Corrected Dockerfile
 
@@ -139,3 +150,5 @@ Codex 回覆後，你要確認：
 - 有檢查 GitHub Pages + React Router 問題
 - 有檢查 Docker multi-stage
 - 有完整修正版 YAML / Dockerfile，若需要
+- 有根據實際 repo 名稱判斷 Pages base
+- 有附檔案路徑與行號

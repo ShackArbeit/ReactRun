@@ -11,12 +11,12 @@ interface SessionFilterProps {
 }
 
 const SESSION_TYPES: Array<{ value: SessionType | ''; label: string }> = [
-  { value: '', label: 'All' },
-  { value: 'easy', label: 'Easy' },
-  { value: 'tempo', label: 'Tempo' },
-  { value: 'interval', label: 'Interval' },
-  { value: 'long', label: 'Long' },
-  { value: 'recovery', label: 'Recovery' },
+  { value: '', label: '全部' },
+  { value: 'easy', label: '輕鬆跑' },
+  { value: 'tempo', label: '節奏跑' },
+  { value: 'interval', label: '間歇跑' },
+  { value: 'long', label: '長距離' },
+  { value: 'recovery', label: '恢復跑' },
 ]
 
 // Memoized because it receives callbacks from DashboardPage — prevents re-render on parent re-render
@@ -45,10 +45,10 @@ export const SessionFilter = memo(function SessionFilter({
           <button
             key={value}
             onClick={() => onTypeChange(value)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-full px-3 py-1 text-sm font-semibold transition-colors ${
               typeFilter === value
-                ? 'bg-cyan-500 text-white'
-                : 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white'
+                ? 'bg-slate-600 text-slate-100'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-slate-100'
             }`}
           >
             {label}
@@ -58,20 +58,20 @@ export const SessionFilter = memo(function SessionFilter({
 
       <input
         type="search"
-        placeholder="Search sessions..."
+        placeholder="搜尋訓練紀錄..."
         value={keyword}
         onChange={handleKeyword}
-        className="flex-1 min-w-40 rounded-lg bg-white/10 border border-white/10 px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
+        className="flex-1 min-w-40 rounded-lg bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-slate-500"
       />
 
       <select
         value={sort}
         onChange={handleSort}
-        className="rounded-lg bg-white/10 border border-white/10 px-3 py-1.5 text-sm text-white focus:outline-none focus:border-cyan-500"
+        className="rounded-lg bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-slate-500"
       >
-        <option value="date">Sort: Date</option>
-        <option value="distance">Sort: Distance</option>
-        <option value="trainingLoad">Sort: Load</option>
+        <option value="date">排序：日期</option>
+        <option value="distance">排序：距離</option>
+        <option value="trainingLoad">排序：訓練負荷</option>
       </select>
     </div>
   )

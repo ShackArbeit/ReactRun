@@ -68,7 +68,18 @@
 - lazy loading 是否真的在 route level
 - 是否有可能造成 UX 閃爍
 
-5. Large list strategy
+5. Production bundle / build output
+
+請檢查：
+
+- 是否有實際執行 `npm run build`
+- Vite / Rollup build output 是否出現 chunk size warning
+- 哪個 route 或 component chunk 最大
+- lazy loading 是否真的減少首屏 bundle，而不是只把大檔拆到 route chunk
+- 是否需要進一步拆分 chart / panel / table 等較重區塊
+- 請不要只從程式碼推測，必須根據實際 build 輸出回答
+
+6. Large list strategy
 
 請檢查：
 
@@ -77,7 +88,7 @@
 - sort / filter 是否會造成過度計算
 - mobile list 是否仍可用
 
-6. Core Web Vitals 思維
+7. Core Web Vitals 思維
 
 請檢查：
 
@@ -85,8 +96,9 @@
 - PerformancePanel 是否有教育性與面試展示價值
 - 是否避免過度承諾，例如沒有真實量測卻宣稱已達標
 - 是否提到「先測量再優化」
+- 是否把「目標值」誤寫成「實測已達成」
 
-7. TanStack Query performance
+8. TanStack Query performance
 
 請檢查：
 
@@ -111,6 +123,7 @@
 - 影響
 - 建議修改
 - code patch
+- 請優先列出「會影響實際載入效能或面試可信度」的問題
 
 ## Should Improve
 
@@ -128,6 +141,14 @@
 
 請列出面試官可能追問的 5 題問題與建議回答。
 
+## Evidence
+
+請列出：
+
+- 你實際檢查了哪些檔案
+- `npm run build` 的關鍵結果
+- 哪些結論是根據程式碼，哪些是根據 build 輸出
+
 ## Suggested Patch
 
 如果有需要，請提供具體修改 patch。
@@ -141,5 +162,7 @@ Codex 回覆後，你要確認：
 
 - 有檢查 useMemo / useCallback 是否濫用
 - 有檢查 chart performance
+- 有檢查實際 build 輸出的 chunk size
 - 有指出面試可以展示什麼
 - 有提醒不要亂宣稱真實 Web Vitals 成績
+- 有附檔案路徑與行號

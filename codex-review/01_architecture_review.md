@@ -137,6 +137,7 @@
 Codex 回覆後，你要確認：
 
 - 有指出具體檔案
+- 有附檔案路徑與行號
 - 不是只講抽象建議
 - 有分 Must Fix / Should Improve / Nice to Have
 - 有幫你整理面試可強調點
