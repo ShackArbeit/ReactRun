@@ -1,0 +1,17 @@
+export interface ApiErrorPayload {
+  code: string
+  message: string
+  details?: unknown
+}
+
+export class ApiError extends Error {
+  readonly code: string
+  readonly details?: unknown
+
+  constructor(payload: ApiErrorPayload) {
+    super(payload.message)
+    this.name = 'ApiError'
+    this.code = payload.code
+    this.details = payload.details
+  }
+}
