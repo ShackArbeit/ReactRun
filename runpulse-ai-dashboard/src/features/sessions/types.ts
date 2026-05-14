@@ -20,8 +20,6 @@ export interface SessionsParams {
   keyword?: string
   sort?: 'date' | 'distance' | 'trainingLoad'
 }
-// 使用 Omit 排除自動建立資料時的 id，createAt，updatedAt
-export type CreateSessionPayload = Omit<Session, 'id' | 'createdAt' | 'updatedAt'>
 
-// 使用 Partial 增加修改資料時所送出的欄位彈性
+export type CreateSessionPayload = Omit<Session, 'id' | 'createdAt' | 'updatedAt'>
 export type UpdateSessionPayload = Partial<CreateSessionPayload>

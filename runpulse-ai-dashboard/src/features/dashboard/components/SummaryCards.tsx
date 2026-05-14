@@ -7,18 +7,18 @@ interface MetricCardProps {
   value: string | number
   unit?: string
   icon: string
-  color: string
+  accent: string
 }
 
-const MetricCard = memo(function MetricCard({ label, value, unit, icon, color }: MetricCardProps) {
+const MetricCard = memo(function MetricCard({ label, value, unit, icon, accent }: MetricCardProps) {
   return (
-    <Card className="p-5 flex items-start gap-4">
-      <div className={`rounded-lg p-2.5 text-xl ${color}`}>{icon}</div>
+    <Card className="flex items-start gap-4 p-5">
+      <div className={`rounded-xl p-2.5 text-xl ${accent}`}>{icon}</div>
       <div className="min-w-0">
-        <p className="text-xs text-gray-400 mb-1">{label}</p>
-        <p className="text-2xl font-bold text-slate-100">
+        <p className="mb-1 text-xs text-[color:var(--app-text-muted)]">{label}</p>
+        <p className="text-2xl font-bold text-[color:var(--app-text)]">
           {value}
-          {unit && <span className="text-sm font-normal text-gray-400 ml-1">{unit}</span>}
+          {unit && <span className="ml-1 text-sm font-normal text-[color:var(--app-text-muted)]">{unit}</span>}
         </p>
       </div>
     </Card>
@@ -29,38 +29,13 @@ interface SummaryCardsProps {
   summary: Summary
 }
 
-// Memoized to prevent re-render when parent re-renders with same summary data
 export const SummaryCards = memo(function SummaryCards({ summary }: SummaryCardsProps) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <MetricCard
-        label="總距離"
-        value={summary.totalDistanceKm}
-        unit="公里"
-        icon="📏"
-        color="bg-slate-700 text-slate-200"
-      />
-      <MetricCard
-        label="週訓練負荷"
-        value={summary.weeklyLoad}
-        unit="點"
-        icon="⚡"
-        color="bg-slate-700 text-slate-200"
-      />
-      <MetricCard
-        label="平均配速"
-        value={summary.avgPace}
-        unit="/公里"
-        icon="⏱"
-        color="bg-slate-700 text-slate-200"
-      />
-      <MetricCard
-        label="恢復分數"
-        value={summary.recoveryScore}
-        unit="/100"
-        icon="💚"
-        color="bg-slate-700 text-slate-200"
-      />
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <MetricCard label="總距離" value={summary.totalDistanceKm} unit="公里" icon="🏁" accent="bg-cyan-500/15 text-cyan-300" />
+      <MetricCard label="週訓練負荷" value={summary.weeklyLoad} unit="點" icon="⚡" accent="bg-fuchsia-500/15 text-fuchsia-300" />
+      <MetricCard label="平均配速" value={summary.avgPace} unit="/公里" icon="⏱️" accent="bg-amber-500/15 text-amber-300" />
+      <MetricCard label="恢復分數" value={summary.recoveryScore} unit="/100" icon="💤" accent="bg-emerald-500/15 text-emerald-300" />
     </div>
   )
 })

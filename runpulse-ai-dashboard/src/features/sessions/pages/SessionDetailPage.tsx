@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useSessionDetailQuery } from '../hooks/useSessionsQuery'
 import { Card } from '@/shared/components/Card'
 import { Button } from '@/shared/components/Button'
@@ -19,19 +19,19 @@ export default function SessionDetailPage() {
   const { data: session, isLoading, error } = useSessionDetailQuery(id)
 
   if (isLoading) return <SkeletonCard />
-  if (error) return <ErrorState message="找不到這筆訓練紀錄" onRetry={() => navigate('/')} />
+  if (error) return <ErrorState message="訓練紀錄載入失敗" onRetry={() => navigate('/')} />
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center gap-3">
         <Button variant="ghost" onClick={() => navigate(-1)}>
-          ← 返回
+          返回
         </Button>
-        <h1 className="text-xl font-bold text-slate-100">訓練詳情</h1>
+        <h1 className="text-xl font-bold text-[color:var(--app-text)]">訓練詳情</h1>
       </div>
 
       {session && (
-        <Card className="p-6 space-y-4">
+        <Card className="space-y-5 p-6">
           <div className="grid grid-cols-2 gap-4">
             {[
               { label: '日期', value: session.date },
@@ -42,16 +42,24 @@ export default function SessionDetailPage() {
               { label: '心率', value: `${session.heartRate} 次/分` },
               { label: '訓練負荷', value: session.trainingLoad },
             ].map(({ label, value }) => (
-              <div key={label}>
-                <p className="text-xs text-gray-500">{label}</p>
-                <p className="text-slate-100 font-medium">{value}</p>
+              <div
+                key={label}
+                className="rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] px-4 py-3 shadow-inner shadow-cyan-400/5"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--app-text-muted)]">
+                  {label}
+                </p>
+                <p className="mt-1 font-semibold text-[color:var(--app-text)]">{value}</p>
               </div>
             ))}
           </div>
+
           {session.note && (
-            <div className="pt-3 border-t border-slate-700">
-              <p className="text-xs text-gray-500 mb-1">備註</p>
-              <p className="text-gray-300 text-sm">{session.note}</p>
+            <div className="rounded-xl border border-fuchsia-400/15 bg-gradient-to-r from-fuchsia-500/10 via-transparent to-cyan-500/10 p-4">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--app-text-muted)]">
+                備註
+              </p>
+              <p className="text-sm leading-6 text-[color:var(--app-text-muted)]">{session.note}</p>
             </div>
           )}
         </Card>

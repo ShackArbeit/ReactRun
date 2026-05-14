@@ -6,9 +6,6 @@ import { SummaryCards } from '../components/SummaryCards'
 import { TrainingTrendChart } from '../components/TrainingTrendChart'
 import { SessionFilter } from '../components/SessionFilter'
 import { SessionTable } from '../components/SessionTable'
-import { AiSuggestionCard } from '../components/AiSuggestionCard'
-import { WeeklyLoadIndicator } from '../components/WeeklyLoadIndicator'
-import { PerformancePanel } from '../components/PerformancePanel'
 import { SkeletonCard } from '@/shared/components/Skeleton'
 import { ErrorState } from '@/shared/components/ErrorState'
 import { EmptyState } from '@/shared/components/EmptyState'
@@ -36,40 +33,18 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Summary metrics */}
       {summaryLoading && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       )}
-      {summaryError && (
-        <ErrorState message="摘要載入失敗" onRetry={() => void refetchSummary()} />
-      )}
+      {summaryError && <ErrorState message="摘要資料載入失敗" onRetry={() => void refetchSummary()} />}
       {summary && <SummaryCards summary={summary} />}
 
-      {/* AI suggestion + weekly load */}
-      {summary && (
-        <div className="grid lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
-            <AiSuggestionCard
-              suggestion={summary.aiSuggestion}
-              fatigueLevel={summary.fatigueLevel}
-            />
-          </div>
-          <WeeklyLoadIndicator weeklyLoad={summary.weeklyLoad} />
-        </div>
-      )}
+      {sessionsLoading ? <SkeletonCard /> : sessions.length > 0 ? <TrainingTrendChart sessions={sessions} /> : null}
 
-      {/* Training trend chart */}
-      {sessionsLoading ? (
-        <SkeletonCard />
-      ) : sessions.length > 0 ? (
-        <TrainingTrendChart sessions={sessions} />
-      ) : null}
-
-      {/* Sessions */}
       <div className="space-y-3">
         <SessionFilter
           typeFilter={sessionTypeFilter}
@@ -81,19 +56,14 @@ export default function DashboardPage() {
         />
 
         {sessionsLoading && <SkeletonCard />}
-        {sessionsError && (
-          <ErrorState message="訓練紀錄載入失敗" onRetry={() => void refetchSessions()} />
-        )}
+        {sessionsError && <ErrorState message="訓練紀錄載入失敗" onRetry={() => void refetchSessions()} />}
         {!sessionsLoading && !sessionsError && sessions.length === 0 && (
-          <EmptyState message="沒有符合篩選條件的訓練紀錄" />
+          <EmptyState message="目前沒有符合條件的訓練紀錄" />
         )}
         {!sessionsLoading && sessions.length > 0 && (
           <SessionTable sessions={sessions} onDelete={handleDelete} />
         )}
       </div>
-
-      {/* Performance panel */}
-      <PerformancePanel />
     </div>
   )
 }

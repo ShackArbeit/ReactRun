@@ -15,21 +15,24 @@ const PageFallback = () => (
   </div>
 )
 
-const router = createBrowserRouter([
-  {
-    element: (
-      <AppLayout>
-        <Suspense fallback={<PageFallback />}>
-          <Outlet />
-        </Suspense>
-      </AppLayout>
-    ),
-    children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'sessions/:id', element: <SessionDetailPage /> },
-    ],
-  },
-])
+const router = createBrowserRouter(
+  [
+    {
+      element: (
+        <AppLayout>
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
+        </AppLayout>
+      ),
+      children: [
+        { index: true, element: <DashboardPage /> },
+        { path: 'sessions/:id', element: <SessionDetailPage /> },
+      ],
+    },
+  ],
+  { basename: '/ReactRun' },
+)
 
 export function AppRouter() {
   return <RouterProvider router={router} />

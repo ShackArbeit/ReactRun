@@ -11,7 +11,7 @@ interface SessionFilterProps {
 }
 
 const SESSION_TYPES: Array<{ value: SessionType | ''; label: string }> = [
-  { value: '', label: '全部' },
+  { value: '', label: '全部類型' },
   { value: 'easy', label: '輕鬆跑' },
   { value: 'tempo', label: '節奏跑' },
   { value: 'interval', label: '間歇跑' },
@@ -19,7 +19,6 @@ const SESSION_TYPES: Array<{ value: SessionType | ''; label: string }> = [
   { value: 'recovery', label: '恢復跑' },
 ]
 
-// Memoized because it receives callbacks from DashboardPage — prevents re-render on parent re-render
 export const SessionFilter = memo(function SessionFilter({
   typeFilter,
   keyword,
@@ -39,16 +38,16 @@ export const SessionFilter = memo(function SessionFilter({
   )
 
   return (
-    <div className="flex flex-wrap gap-3 items-center">
-      <div className="flex gap-1.5 flex-wrap">
+    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-3 shadow-[var(--app-shadow)]">
+      <div className="flex flex-wrap gap-2">
         {SESSION_TYPES.map(({ value, label }) => (
           <button
             key={value}
             onClick={() => onTypeChange(value)}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition-colors ${
+            className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold tracking-wide transition-all duration-200 ${
               typeFilter === value
-                ? 'bg-slate-600 text-slate-100'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-slate-100'
+                ? 'border-cyan-300/50 bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-500 text-white shadow-lg shadow-cyan-500/20'
+                : 'border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] text-[color:var(--app-text-muted)] hover:border-cyan-300/40 hover:bg-cyan-400/10 hover:text-[color:var(--app-text)]'
             }`}
           >
             {label}
@@ -61,17 +60,17 @@ export const SessionFilter = memo(function SessionFilter({
         placeholder="搜尋訓練紀錄..."
         value={keyword}
         onChange={handleKeyword}
-        className="flex-1 min-w-40 rounded-lg bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-slate-500"
+        className="min-w-44 flex-1 rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-input-bg)] px-4 py-2 text-sm text-[color:var(--app-text)] placeholder:text-[color:var(--app-text-muted)] outline-none transition-all focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
       />
 
       <select
         value={sort}
         onChange={handleSort}
-        className="rounded-lg bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-slate-500"
+        className="rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-input-bg)] px-4 py-2 text-sm text-[color:var(--app-text)] outline-none transition-all focus:border-fuchsia-400/60 focus:ring-2 focus:ring-fuchsia-400/20"
       >
-        <option value="date">排序：日期</option>
-        <option value="distance">排序：距離</option>
-        <option value="trainingLoad">排序：訓練負荷</option>
+        <option value="date">依日期排序</option>
+        <option value="distance">依距離排序</option>
+        <option value="trainingLoad">依訓練負荷排序</option>
       </select>
     </div>
   )

@@ -49,7 +49,6 @@ export function useUpdateSessionMutation() {
       return { previous }
     },
     onError: (_err, _vars, ctx) => {
-      // Rollback on failure
       if (ctx?.previous) {
         for (const [key, data] of ctx.previous) {
           qc.setQueryData(key, data)
