@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useUiStore } from '@/shared/store/uiStore'
-import { Button } from '@/shared/components/Button'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -11,8 +10,6 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const themeMode = useUiStore((s) => s.themeMode)
   const toggleTheme = useUiStore((s) => s.toggleTheme)
-  const toggleCompact = useUiStore((s) => s.toggleCompactMode)
-  const compact = useUiStore((s) => s.dashboardCompactMode)
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode
@@ -39,9 +36,6 @@ export function AppLayout({ children }: AppLayoutProps) {
           </nav> */}
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
-            <Button variant="ghost" size="sm" onClick={toggleCompact}>
-              {compact ? '展開版面' : '精簡版面'}
-            </Button>
             <button
               type="button"
               onClick={toggleTheme}
@@ -63,7 +57,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </header>
 
-      <main className={`mx-auto max-w-7xl px-4 sm:px-6 ${compact ? 'py-4' : 'py-8'}`}>
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         {children}
       </main>
     </div>

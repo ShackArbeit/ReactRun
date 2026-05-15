@@ -5,11 +5,9 @@ interface UiState {
   themeMode: 'dark' | 'light'
   selectedWeek: string
   sessionTypeFilter: SessionType | ''
-  dashboardCompactMode: boolean
   toggleTheme: () => void
   setSelectedWeek: (week: string) => void
   setSessionTypeFilter: (type: SessionType | '') => void
-  toggleCompactMode: () => void
 }
 
 const THEME_STORAGE_KEY = 'runpulse-theme'
@@ -27,7 +25,6 @@ export const useUiStore = create<UiState>((set) => ({
   themeMode: getInitialTheme(),
   selectedWeek: '',
   sessionTypeFilter: '',
-  dashboardCompactMode: false,
   toggleTheme: () =>
     set((s) => {
       const next = s.themeMode === 'dark' ? 'light' : 'dark'
@@ -36,6 +33,4 @@ export const useUiStore = create<UiState>((set) => ({
     }),
   setSelectedWeek: (week) => set({ selectedWeek: week }),
   setSessionTypeFilter: (type) => set({ sessionTypeFilter: type }),
-  toggleCompactMode: () =>
-    set((s) => ({ dashboardCompactMode: !s.dashboardCompactMode })),
 }))

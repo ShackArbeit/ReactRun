@@ -5,6 +5,14 @@ import { mockSummary, mockSessions } from './data'
 
 let sessions: Session[] = [...mockSessions]
 
+const TYPE_LABEL: Record<string, string> = {
+  easy: '輕鬆跑',
+  tempo: '節奏跑',
+  interval: '間歇跑',
+  long: '長距離',
+  recovery: '恢復跑',
+}
+
 export const handlers = [
   http.get('/api/summary', () => {
     return HttpResponse.json(mockSummary)
@@ -13,21 +21,28 @@ export const handlers = [
   http.get('/api/sessions', ({ request }) => {
     const url = new URL(request.url)
     const type = url.searchParams.get('type')
-    const keyword = url.searchParams.get('keyword')
-    const sort = url.searchParams.get('sort') as 'date' | 'distance' | 'trainingLoad' | null
+    const rawKeyword = url.searchParams.get('keyword')
+    const sort = url.searchParams.get('sort')
 
     let result = [...sessions]
 
     if (type) result = result.filter((s) => s.type === type)
-    if (keyword) {
-      const kw = keyword.toLowerCase()
-      result = result.filter(
-        (s) =>
-          s.type.includes(kw) ||
-          s.note.toLowerCase().includes(kw) ||
-          s.date.includes(kw)
+
+    const kw = rawKeyword?.toLowerCase().trim() ?? ''
+    if (kw) {
+      const kwNum = parseFloat(kw.replace(/公里|分鐘|次\/分/g, '').trim())
+      result = result.filter((s) =>
+        TYPE_LABEL[s.type].includes(kw) ||
+        s.type.includes(kw) ||
+        s.note.toLowerCase().includes(kw) ||
+        s.date.includes(kw) ||
+        s.avgPace.includes(kw) ||
+        (!isNaN(kwNum) && s.distanceKm === kwNum) ||
+        (!isNaN(kwNum) && s.durationMin === kwNum) ||
+        (!isNaN(kwNum) && s.heartRate === kwNum)
       )
     }
+
     if (sort === 'distance') result.sort((a, b) => b.distanceKm - a.distanceKm)
     else if (sort === 'trainingLoad') result.sort((a, b) => b.trainingLoad - a.trainingLoad)
     else result.sort((a, b) => b.date.localeCompare(a.date))
@@ -36,7 +51,8 @@ export const handlers = [
   }),
 
   http.get('/api/sessions/:id', ({ params }) => {
-    const session = sessions.find((s) => s.id === params.id)
+    const id = String(params.id)
+    const session = sessions.find((s) => s.id === id)
     if (!session) {
       return HttpResponse.json(
         { code: 'NOT_FOUND', message: '找不到訓練紀錄' },
@@ -60,8 +76,9 @@ export const handlers = [
   }),
 
   http.patch('/api/sessions/:id', async ({ params, request }) => {
+    const id = String(params.id)
     const payload = (await request.json()) as UpdateSessionPayload
-    const idx = sessions.findIndex((s) => s.id === params.id)
+    const idx = sessions.findIndex((s) => s.id === id)
     if (idx === -1) {
       return HttpResponse.json(
         { code: 'NOT_FOUND', message: '找不到訓練紀錄' },
@@ -73,14 +90,15 @@ export const handlers = [
   }),
 
   http.delete('/api/sessions/:id', ({ params }) => {
-    const idx = sessions.findIndex((s) => s.id === params.id)
+    const id = String(params.id)
+    const idx = sessions.findIndex((s) => s.id === id)
     if (idx === -1) {
       return HttpResponse.json(
         { code: 'NOT_FOUND', message: '找不到訓練紀錄' },
         { status: 404 }
       )
     }
-    sessions = sessions.filter((s) => s.id !== params.id)
+    sessions = sessions.filter((s) => s.id !== id)
     return new HttpResponse(null, { status: 204 })
   }),
 ]

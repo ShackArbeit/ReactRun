@@ -1,6 +1,9 @@
 import { useState, useCallback } from 'react'
+// 一開始載入畫面時跑步總結的 Tank Query Hook
 import { useSummaryQuery } from '../hooks/useSummaryQuery'
+// 有關 Sessions & 刪除 Sessions 的 Tank Query Hook
 import { useSessionsQuery, useDeleteSessionMutation } from '@/features/sessions/hooks/useSessionsQuery'
+// Zustand 中有關 Global State 的 Hook
 import { useUiStore } from '@/shared/store/uiStore'
 import { SummaryCards } from '../components/SummaryCards'
 import { TrainingTrendChart } from '../components/TrainingTrendChart'
