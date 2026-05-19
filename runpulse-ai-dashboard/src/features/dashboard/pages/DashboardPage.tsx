@@ -12,6 +12,7 @@ import { SessionTable } from '../components/SessionTable'
 import { SkeletonCard } from '@/shared/components/Skeleton'
 import { ErrorState } from '@/shared/components/ErrorState'
 import { EmptyState } from '@/shared/components/EmptyState'
+import { BottomSpinner } from '@/shared/components/BottomSpinner'
 import type { SessionType } from '@/features/sessions/types'
 
 export default function DashboardPage() {
@@ -22,8 +23,13 @@ export default function DashboardPage() {
   const [sort, setSort] = useState<'date' | 'distance' | 'trainingLoad'>('date')
 
   const { data: summary, isLoading: summaryLoading, error: summaryError, refetch: refetchSummary } = useSummaryQuery()
-  const { data: sessions = [], isLoading: sessionsLoading, error: sessionsError, refetch: refetchSessions } =
-    useSessionsQuery({ type: sessionTypeFilter, keyword, sort })
+  const {
+    data: sessions = [],
+    isLoading: sessionsLoading,
+    isFetching: sessionsFetching,
+    error: sessionsError,
+    refetch: refetchSessions,
+  } = useSessionsQuery({ type: sessionTypeFilter, keyword, sort })
   const deleteMutation = useDeleteSessionMutation()
 
   const handleTypeChange = useCallback(
@@ -35,38 +41,43 @@ export default function DashboardPage() {
   const handleDelete = useCallback((id: string) => deleteMutation.mutate(id), [deleteMutation])
 
   return (
-    <div className="space-y-6">
-      {summaryLoading && (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
+    <>
+      <div className="space-y-6">
+        {summaryLoading && (
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        )}
+        {summaryError && <ErrorState message="摘要資料載入失敗" onRetry={() => void refetchSummary()} />}
+        {summary && <SummaryCards summary={summary} />}
+
+        {sessionsLoading ? <SkeletonCard /> : sessions.length > 0 ? <TrainingTrendChart sessions={sessions} /> : null}
+
+        <div className="space-y-3">
+          <SessionFilter
+            typeFilter={sessionTypeFilter}
+            keyword={keyword}
+            sort={sort}
+            onTypeChange={handleTypeChange}
+            onKeywordChange={handleKeywordChange}
+            onSortChange={handleSortChange}
+          />
+
+          {sessionsLoading && <SkeletonCard />}
+          {sessionsError && <ErrorState message="訓練紀錄載入失敗" onRetry={() => void refetchSessions()} />}
+          {!sessionsLoading && !sessionsError && sessions.length === 0 && (
+            <EmptyState message="目前沒有符合條件的訓練紀錄" />
+          )}
+          {!sessionsLoading && sessions.length > 0 && (
+            <SessionTable sessions={sessions} onDelete={handleDelete} />
+          )}
         </div>
-      )}
-      {summaryError && <ErrorState message="摘要資料載入失敗" onRetry={() => void refetchSummary()} />}
-      {summary && <SummaryCards summary={summary} />}
-
-      {sessionsLoading ? <SkeletonCard /> : sessions.length > 0 ? <TrainingTrendChart sessions={sessions} /> : null}
-
-      <div className="space-y-3">
-        <SessionFilter
-          typeFilter={sessionTypeFilter}
-          keyword={keyword}
-          sort={sort}
-          onTypeChange={handleTypeChange}
-          onKeywordChange={handleKeywordChange}
-          onSortChange={handleSortChange}
-        />
-
-        {sessionsLoading && <SkeletonCard />}
-        {sessionsError && <ErrorState message="訓練紀錄載入失敗" onRetry={() => void refetchSessions()} />}
-        {!sessionsLoading && !sessionsError && sessions.length === 0 && (
-          <EmptyState message="目前沒有符合條件的訓練紀錄" />
-        )}
-        {!sessionsLoading && sessions.length > 0 && (
-          <SessionTable sessions={sessions} onDelete={handleDelete} />
-        )}
       </div>
-    </div>
+
+      {/* Fixed bottom spinner — appears while sessions API is in-flight (simulates LLM inference latency) */}
+      <BottomSpinner visible={sessionsFetching} />
+    </>
   )
 }

@@ -1,326 +1,200 @@
 import type { Summary } from '@/features/dashboard/types'
-import type { Session } from '@/features/sessions/types'
+import type { Session, SessionType } from '@/features/sessions/types'
 
 export const mockSummary: Summary = {
-  totalDistanceKm: 392.6,
-  weeklyLoad: 468,
-  avgPace: '5:29',
-  recoveryScore: 73,
+  totalDistanceKm: 1843.7,
+  weeklyLoad: 512,
+  avgPace: '5:31',
+  recoveryScore: 71,
   fatigueLevel: 'medium',
-  aiSuggestion: 'Next week: keep 1 interval, 1 tempo, 1 long run, and use recovery runs in between.',
+  aiSuggestion:
+    'LLM inference (200 sessions): Reduce weekly load by 10% next week. Prioritize 1 interval + 1 tempo + 1 long run. Insert recovery runs between quality sessions to improve adaptation.',
 }
 
-export const mockSessions: Session[] = [
-  {
-    id: '1',
-    date: '2026-05-12',
-    type: 'easy',
-    distanceKm: 8,
-    durationMin: 48,
-    avgPace: '6:00',
-    heartRate: 138,
-    trainingLoad: 65,
-    note: 'Easy run, steady legs, good overall control.',
-    createdAt: '2026-05-12T07:00:00Z',
-    updatedAt: '2026-05-12T07:48:00Z',
+// ---------- generator ----------
+
+type TypeConfig = {
+  distRange: [number, number]
+  paceRange: [number, number]
+  hrRange: [number, number]
+  loadRange: [number, number]
+  notes: string[]
+}
+
+const TYPE_CONFIG: Record<SessionType, TypeConfig> = {
+  easy: {
+    distRange: [5, 13],
+    paceRange: [5.5, 6.5],
+    hrRange: [125, 145],
+    loadRange: [40, 90],
+    notes: [
+      'Easy run, steady rhythm and relaxed breathing.',
+      'Morning easy run with full warm-up.',
+      'Flat route, consistent effort throughout.',
+      'Legs felt light, good overall control.',
+      'Evening run, conservative and aerobic.',
+      'Easy conversational pace, focus on cadence.',
+    ],
   },
-  {
-    id: '11',
-    date: '2026-05-11',
-    type: 'recovery',
-    distanceKm: 4.2,
-    durationMin: 30,
-    avgPace: '7:08',
-    heartRate: 119,
-    trainingLoad: 28,
-    note: 'Recovery jog for circulation and freshness.',
-    createdAt: '2026-05-11T18:10:00Z',
-    updatedAt: '2026-05-11T18:40:00Z',
+  tempo: {
+    distRange: [8, 15],
+    paceRange: [4.8, 5.3],
+    hrRange: [160, 178],
+    loadRange: [100, 160],
+    notes: [
+      'Tempo blocks near threshold effort.',
+      'Progressive tempo with faster finish.',
+      '4 x 2km tempo, stable pacing throughout.',
+      'Threshold run, strong final kilometer.',
+      'Sustained effort, good form and breathing.',
+      '3 x 3km tempo with recovery jogs in between.',
+    ],
   },
-  {
-    id: '2',
-    date: '2026-05-10',
-    type: 'tempo',
-    distanceKm: 10,
-    durationMin: 52,
-    avgPace: '5:12',
-    heartRate: 168,
-    trainingLoad: 118,
-    note: '4 x 2km tempo blocks with stable pacing.',
-    createdAt: '2026-05-10T06:30:00Z',
-    updatedAt: '2026-05-10T07:22:00Z',
+  interval: {
+    distRange: [6, 12],
+    paceRange: [4.4, 5.0],
+    hrRange: [170, 185],
+    loadRange: [120, 165],
+    notes: [
+      '8 x 400m, finished with one strong closing rep.',
+      '6 x 800m with full recovery between reps.',
+      '10 x 400m, clear pacing structure maintained.',
+      '5 x 1km at race pace, solid execution.',
+      '12 x 200m, speed focus with controlled form.',
+      '4 x 1.5km, well-controlled effort throughout.',
+    ],
   },
-  {
-    id: '12',
-    date: '2026-05-08',
-    type: 'easy',
-    distanceKm: 6.8,
-    durationMin: 41,
-    avgPace: '6:02',
-    heartRate: 132,
-    trainingLoad: 54,
-    note: 'Morning run, smooth rhythm and light legs.',
-    createdAt: '2026-05-08T06:45:00Z',
-    updatedAt: '2026-05-08T07:26:00Z',
+  long: {
+    distRange: [16, 32],
+    paceRange: [5.5, 6.3],
+    hrRange: [140, 158],
+    loadRange: [150, 250],
+    notes: [
+      'Long run with fueling every 30 minutes.',
+      'Endurance day, held pace well in the second half.',
+      'Marathon pace block integrated in final 8km.',
+      'Hilly long run, good aerobic adaptation.',
+      'Easy long run, fully aerobic and conversational.',
+      'Long run with late fueling stress test.',
+    ],
   },
-  {
-    id: '3',
-    date: '2026-05-09',
-    type: 'interval',
-    distanceKm: 7.5,
-    durationMin: 45,
-    avgPace: '4:50',
-    heartRate: 178,
-    trainingLoad: 142,
-    note: '8 x 400m, finished with one strong closing rep.',
-    createdAt: '2026-05-09T18:00:00Z',
-    updatedAt: '2026-05-09T18:45:00Z',
+  recovery: {
+    distRange: [3, 7],
+    paceRange: [6.5, 7.5],
+    hrRange: [110, 130],
+    loadRange: [20, 50],
+    notes: [
+      'Recovery jog, light and easy throughout.',
+      'Treadmill recovery run, focus on easy turnover.',
+      'Easy walk-jog, active recovery session.',
+      'Light recovery before next quality session.',
+      'Active recovery, cadence and breathing focus.',
+      'Short recovery run, fully relaxed effort.',
+    ],
   },
-  {
-    id: '13',
-    date: '2026-05-04',
-    type: 'long',
-    distanceKm: 18.4,
-    durationMin: 111,
-    avgPace: '6:02',
-    heartRate: 146,
-    trainingLoad: 168,
-    note: 'Long run with late fueling test.',
-    createdAt: '2026-05-04T05:50:00Z',
-    updatedAt: '2026-05-04T07:41:00Z',
-  },
-  {
-    id: '4',
-    date: '2026-05-07',
-    type: 'long',
-    distanceKm: 22,
-    durationMin: 128,
-    avgPace: '5:49',
-    heartRate: 148,
-    trainingLoad: 195,
-    note: 'Endurance day, held pace well in the second half.',
-    createdAt: '2026-05-07T07:00:00Z',
-    updatedAt: '2026-05-07T09:08:00Z',
-  },
-  {
-    id: '14',
-    date: '2026-05-02',
-    type: 'tempo',
-    distanceKm: 11.2,
-    durationMin: 57,
-    avgPace: '5:05',
-    heartRate: 170,
-    trainingLoad: 128,
-    note: '4 x 1.2km tempo set, strong control.',
-    createdAt: '2026-05-02T06:20:00Z',
-    updatedAt: '2026-05-02T07:17:00Z',
-  },
-  {
-    id: '5',
-    date: '2026-05-06',
-    type: 'recovery',
-    distanceKm: 5,
-    durationMin: 35,
-    avgPace: '7:00',
-    heartRate: 122,
-    trainingLoad: 35,
-    note: 'Recovery run before the next quality session.',
-    createdAt: '2026-05-06T08:00:00Z',
-    updatedAt: '2026-05-06T08:35:00Z',
-  },
-  {
-    id: '15',
-    date: '2026-04-30',
-    type: 'interval',
-    distanceKm: 8.7,
-    durationMin: 53,
-    avgPace: '4:58',
-    heartRate: 179,
-    trainingLoad: 149,
-    note: '6 x 800m with strong final output.',
-    createdAt: '2026-04-30T06:25:00Z',
-    updatedAt: '2026-04-30T07:18:00Z',
-  },
-  {
-    id: '6',
-    date: '2026-05-05',
-    type: 'easy',
-    distanceKm: 9.5,
-    durationMin: 58,
-    avgPace: '6:06',
-    heartRate: 135,
-    trainingLoad: 72,
-    note: 'Easy run on a flat route.',
-    createdAt: '2026-05-05T07:00:00Z',
-    updatedAt: '2026-05-05T07:58:00Z',
-  },
-  {
-    id: '16',
-    date: '2026-04-27',
-    type: 'easy',
-    distanceKm: 10.3,
-    durationMin: 63,
-    avgPace: '6:08',
-    heartRate: 136,
-    trainingLoad: 77,
-    note: 'Windy day, conservative start and faster close.',
-    createdAt: '2026-04-27T07:10:00Z',
-    updatedAt: '2026-04-27T08:13:00Z',
-  },
-  {
-    id: '7',
-    date: '2026-05-03',
-    type: 'tempo',
-    distanceKm: 12,
-    durationMin: 61,
-    avgPace: '5:05',
-    heartRate: 172,
-    trainingLoad: 135,
-    note: 'Tempo run near threshold effort.',
-    createdAt: '2026-05-03T06:00:00Z',
-    updatedAt: '2026-05-03T07:01:00Z',
-  },
-  {
-    id: '17',
-    date: '2026-04-25',
-    type: 'long',
-    distanceKm: 26.1,
-    durationMin: 154,
-    avgPace: '5:54',
-    heartRate: 151,
-    trainingLoad: 223,
-    note: 'Long run with fueling test every 30 minutes.',
-    createdAt: '2026-04-25T05:40:00Z',
-    updatedAt: '2026-04-25T08:14:00Z',
-  },
-  {
-    id: '8',
-    date: '2026-05-01',
-    type: 'easy',
-    distanceKm: 7,
-    durationMin: 43,
-    avgPace: '6:09',
-    heartRate: 130,
-    trainingLoad: 52,
-    note: 'Evening easy run with full cooldown.',
-    createdAt: '2026-05-01T19:00:00Z',
-    updatedAt: '2026-05-01T19:43:00Z',
-  },
-  {
-    id: '18',
-    date: '2026-04-23',
-    type: 'recovery',
-    distanceKm: 5.8,
-    durationMin: 37,
-    avgPace: '6:22',
-    heartRate: 124,
-    trainingLoad: 38,
-    note: 'Treadmill recovery run, focus on easy turnover.',
-    createdAt: '2026-04-23T19:20:00Z',
-    updatedAt: '2026-04-23T19:57:00Z',
-  },
-  {
-    id: '9',
-    date: '2026-04-29',
-    type: 'interval',
-    distanceKm: 9,
-    durationMin: 55,
-    avgPace: '4:55',
-    heartRate: 180,
-    trainingLoad: 155,
-    note: '10 x 800m with clear pacing structure.',
-    createdAt: '2026-04-29T06:30:00Z',
-    updatedAt: '2026-04-29T07:25:00Z',
-  },
-  {
-    id: '19',
-    date: '2026-04-21',
-    type: 'tempo',
-    distanceKm: 12.4,
-    durationMin: 63,
-    avgPace: '5:04',
-    heartRate: 174,
-    trainingLoad: 138,
-    note: 'Threshold run with progressive finish.',
-    createdAt: '2026-04-21T06:35:00Z',
-    updatedAt: '2026-04-21T07:38:00Z',
-  },
-  {
-    id: '10',
-    date: '2026-04-28',
-    type: 'long',
-    distanceKm: 24.5,
-    durationMin: 145,
-    avgPace: '5:55',
-    heartRate: 150,
-    trainingLoad: 210,
-    note: 'Long run, fueling and pacing stayed controlled.',
-    createdAt: '2026-04-28T06:00:00Z',
-    updatedAt: '2026-04-28T08:25:00Z',
-  },
-  {
-    id: '20',
-    date: '2026-04-19',
-    type: 'easy',
-    distanceKm: 8.4,
-    durationMin: 50,
-    avgPace: '5:56',
-    heartRate: 133,
-    trainingLoad: 61,
-    note: 'Core session earlier, legs felt a bit heavy.',
-    createdAt: '2026-04-19T08:00:00Z',
-    updatedAt: '2026-04-19T08:50:00Z',
-  },
-  {
-    id: '21',
-    date: '2026-04-17',
-    type: 'interval',
-    distanceKm: 9.6,
-    durationMin: 58,
-    avgPace: '4:49',
-    heartRate: 181,
-    trainingLoad: 158,
-    note: '10 x 400m with a strong last two reps.',
-    createdAt: '2026-04-17T06:30:00Z',
-    updatedAt: '2026-04-17T07:28:00Z',
-  },
-  {
-    id: '22',
-    date: '2026-04-14',
-    type: 'long',
-    distanceKm: 28.3,
-    durationMin: 168,
-    avgPace: '5:56',
-    heartRate: 149,
-    trainingLoad: 238,
-    note: 'Marathon pace block with solid fueling.',
-    createdAt: '2026-04-14T05:45:00Z',
-    updatedAt: '2026-04-14T08:33:00Z',
-  },
-  {
-    id: '23',
-    date: '2026-04-12',
-    type: 'recovery',
-    distanceKm: 4.9,
-    durationMin: 32,
-    avgPace: '6:31',
-    heartRate: 121,
-    trainingLoad: 30,
-    note: 'Light recovery run and cadence control.',
-    createdAt: '2026-04-12T18:50:00Z',
-    updatedAt: '2026-04-12T19:22:00Z',
-  },
-  {
-    id: '24',
-    date: '2026-04-10',
-    type: 'tempo',
-    distanceKm: 13.1,
-    durationMin: 67,
-    avgPace: '5:07',
-    heartRate: 173,
-    trainingLoad: 144,
-    note: 'Progressive tempo run with a faster final 3km.',
-    createdAt: '2026-04-10T06:15:00Z',
-    updatedAt: '2026-04-10T07:22:00Z',
-  },
-]
+}
+
+// Deterministic pseudo-random: avoids Math.random() so data is stable across reloads
+function seededFloat(seed: number): number {
+  const x = Math.sin(seed + 1) * 10000
+  return x - Math.floor(x)
+}
+
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t
+}
+
+function toPaceStr(paceDecimal: number): string {
+  const min = Math.floor(paceDecimal)
+  const sec = Math.round((paceDecimal - min) * 60)
+  return `${min}:${String(sec).padStart(2, '0')}`
+}
+
+function toDateStr(d: Date): string {
+  return d.toISOString().split('T')[0]
+}
+
+function generateSessions(): Session[] {
+  const sessions: Session[] = []
+
+  // ~8.5 years: 2018-01-01 → 2026-05-12
+  // Guarantees 2000+ total sessions and 300+ per type
+  const start = new Date('2018-01-01T00:00:00Z')
+  const end = new Date('2026-05-12T00:00:00Z')
+
+  // Day-of-week default type (null = rest)
+  const DOW_TYPE: (SessionType | null)[] = [
+    'recovery', // Sun 0
+    'easy',     // Mon 1
+    'interval', // Tue 2
+    'easy',     // Wed 3
+    null,       // Thu 3 — decided per-seed below
+    'tempo',    // Fri 5
+    'long',     // Sat 6
+  ]
+
+  let idCounter = 100
+  const cur = new Date(start)
+
+  while (cur <= end) {
+    const dow = cur.getUTCDay()
+    const s0 = seededFloat(idCounter * 17 + dow)
+    const s1 = seededFloat(idCounter * 7 + 1)
+    const s2 = seededFloat(idCounter * 13 + 2)
+    const s3 = seededFloat(idCounter * 19 + 3)
+    const s4 = seededFloat(idCounter * 23 + 4)
+    const s5 = seededFloat(idCounter * 29 + 5)
+
+    let sessionType: SessionType | null = DOW_TYPE[dow]
+
+    // Thu: 40 % chance of recovery run, otherwise rest
+    if (dow === 4) sessionType = s0 < 0.4 ? 'recovery' : null
+    // Sun: 25 % rest, otherwise recovery
+    if (dow === 0) sessionType = s0 < 0.25 ? null : 'recovery'
+    // Tue: alternate interval / tempo
+    if (dow === 2) sessionType = idCounter % 3 === 0 ? 'tempo' : 'interval'
+    // Fri: alternate tempo / interval
+    if (dow === 5) sessionType = idCounter % 3 === 1 ? 'interval' : 'tempo'
+
+    if (sessionType) {
+      const cfg = TYPE_CONFIG[sessionType]
+
+      const dist = +lerp(cfg.distRange[0], cfg.distRange[1], s1).toFixed(1)
+      const pace = +lerp(cfg.paceRange[0], cfg.paceRange[1], s2).toFixed(2)
+      const hr   = Math.round(lerp(cfg.hrRange[0], cfg.hrRange[1], s3))
+      const load = Math.round(lerp(cfg.loadRange[0], cfg.loadRange[1], s4))
+      const durationMin = Math.round(dist * pace)
+      const note = cfg.notes[Math.floor(s5 * cfg.notes.length)]
+
+      const dateStr = toDateStr(cur)
+      const startHour = sessionType === 'long' ? 6 : sessionType === 'interval' ? 18 : 7
+      const createdAt = new Date(`${dateStr}T${String(startHour).padStart(2, '0')}:00:00Z`).toISOString()
+      const updatedAt = new Date(
+        new Date(createdAt).getTime() + durationMin * 60 * 1000
+      ).toISOString()
+
+      sessions.push({
+        id: String(idCounter),
+        date: dateStr,
+        type: sessionType,
+        distanceKm: dist,
+        durationMin,
+        avgPace: toPaceStr(pace),
+        heartRate: hr,
+        trainingLoad: load,
+        note,
+        createdAt,
+        updatedAt,
+      })
+
+      idCounter++
+    }
+
+    cur.setUTCDate(cur.getUTCDate() + 1)
+  }
+
+  // Most recent first
+  return sessions.reverse()
+}
+
+export const mockSessions: Session[] = generateSessions()

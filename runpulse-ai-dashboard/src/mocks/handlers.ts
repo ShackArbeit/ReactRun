@@ -18,7 +18,10 @@ export const handlers = [
     return HttpResponse.json(mockSummary)
   }),
 
-  http.get('/api/sessions', ({ request }) => {
+  http.get('/api/sessions', async ({ request }) => {
+    // Simulate LLM model inference API latency (batch result delivery)
+    await new Promise<void>((resolve) => setTimeout(resolve, 3500))
+
     const url = new URL(request.url)
     const type = url.searchParams.get('type')
     const rawKeyword = url.searchParams.get('keyword')
