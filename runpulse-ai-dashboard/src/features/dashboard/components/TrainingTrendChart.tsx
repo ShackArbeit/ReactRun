@@ -1,8 +1,14 @@
 import { useEffect, useRef } from 'react'
-import * as echarts from 'echarts'
+import * as echarts from 'echarts/core'
+import { BarChart, LineChart } from 'echarts/charts'
+import { TooltipComponent, GridComponent, LegendComponent } from 'echarts/components'
+import { SVGRenderer } from 'echarts/renderers'
+import type { ECharts } from 'echarts/core'
 import type { Session } from '@/features/sessions/types'
 import { Card } from '@/shared/components/Card'
 import { useUiStore } from '@/shared/store/uiStore'
+
+echarts.use([BarChart, LineChart, TooltipComponent, GridComponent, LegendComponent, SVGRenderer])
 
 interface TrainingTrendChartProps {
   sessions: Session[]
@@ -99,7 +105,7 @@ export function TrainingTrendChart({ sessions }: TrainingTrendChartProps) {
 
   const themeMode = useUiStore((s) => s.themeMode)
   const chartRef = useRef<HTMLDivElement>(null)
-  const chartInstance = useRef<echarts.ECharts | null>(null)
+  const chartInstance = useRef<ECharts | null>(null)
 
   useEffect(() => {
     if (!chartRef.current) return

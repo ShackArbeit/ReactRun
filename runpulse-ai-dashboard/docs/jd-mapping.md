@@ -7,8 +7,6 @@
 | 前端架構設計：模組化、狀態管理、資料流 | Feature-based architecture、TanStack Query、Zustand | shared 不依賴 features，server state 與 UI state 明確分工 |
 | RESTful API 串接與後端協作 | MSW 模擬 6 個 REST endpoints，typed API client | API contract 先行，切換真實後端只改 endpoints.ts |
 | 熟悉 Git flow | GitHub Actions CI on PR/push | PR 時自動驗證，main merge 後自動部署 |
-| 加分：Docker | Multi-stage Dockerfile（Node build → Nginx serve） | 驗證 production build，可直接用於容器化部署 |
-| 加分：Nginx | nginx.conf with SPA fallback, gzip, cache headers | SPA routing 正確，靜態資源 cache 1 年 |
 | 加分：資料視覺化 | ECharts dual-axis chart（distance bar + load line） | useMemo 避免 option 重建，ResizeObserver 做 responsive resize |
 | 加分：前端架構規劃 | Feature-based arch、dependency rule、state分層 | 面試時可以畫出資料流：UI → hook → API client → MSW → cache → UI |
 | 善用 AI 工具 | Claude Code 加速開發，架構決策由自己定義 | AI 工具提升效率，不替代技術判斷 |
