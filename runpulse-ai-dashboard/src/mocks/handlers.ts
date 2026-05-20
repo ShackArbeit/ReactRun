@@ -19,7 +19,7 @@ export const handlers = [
   }),
 
   http.get('/api/sessions', async ({ request }) => {
-    // Simulate LLM model inference API latency (batch result delivery)
+   
     await new Promise<void>((resolve) => setTimeout(resolve, 3500))
 
     const url = new URL(request.url)

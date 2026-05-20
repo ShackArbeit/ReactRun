@@ -1,11 +1,8 @@
 import { useState, useCallback } from 'react'
-// 一開始載入畫面時跑步總結的 Tank Query Hook
-import { useSummaryQuery } from '../hooks/useSummaryQuery'
 // 有關 Sessions & 刪除 Sessions 的 Tank Query Hook
 import { useSessionsQuery, useDeleteSessionMutation } from '@/features/sessions/hooks/useSessionsQuery'
 // Zustand 中有關 Global State 的 Hook
 import { useUiStore } from '@/shared/store/uiStore'
-import { SummaryCards } from '../components/SummaryCards'
 import { TrainingTrendChart } from '../components/TrainingTrendChart'
 import { SessionFilter } from '../components/SessionFilter'
 import { SessionTable } from '../components/SessionTable'
@@ -22,7 +19,6 @@ export default function DashboardPage() {
   const [keyword, setKeyword] = useState('')
   const [sort, setSort] = useState<'date' | 'distance' | 'trainingLoad'>('date')
 
-  const { data: summary, isLoading: summaryLoading, error: summaryError, refetch: refetchSummary } = useSummaryQuery()
   const {
     data: sessions = [],
     isLoading: sessionsLoading,
@@ -43,16 +39,6 @@ export default function DashboardPage() {
   return (
     <>
       <div className="space-y-6">
-        {summaryLoading && (
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-          </div>
-        )}
-        {summaryError && <ErrorState message="摘要資料載入失敗" onRetry={() => void refetchSummary()} />}
-        {summary && <SummaryCards summary={summary} />}
-
         {sessionsLoading ? <SkeletonCard /> : sessions.length > 0 ? <TrainingTrendChart sessions={sessions} /> : null}
 
         <div className="space-y-3">
