@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { memo, useEffect, useMemo, useReducer, useRef, type CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FixedSizeList, type ListChildComponentProps, type ListOnItemsRenderedProps } from 'react-window'
 import type { Session } from '@/features/sessions/types'
@@ -52,6 +52,41 @@ interface RowData {
   navigate: (path: string) => void
   onDelete?: (id: string) => void
   revealRange: { start: number; end: number } | null
+}
+
+type TableState = {
+  visibleCount: number
+  loadingMore: boolean
+  loadCompleteMessage: string | null
+  revealRange: { start: number; end: number } | null
+}
+
+type TableAction =
+  | { type: 'RESET'; count: number }
+  | { type: 'START_LOADING' }
+  | { type: 'REVEAL_STEP'; count: number }
+  | { type: 'REVEAL_COMPLETE'; start: number; end: number }
+  | { type: 'CLEAR_REVEAL' }
+  | { type: 'LOAD_COMPLETE'; message: string }
+  | { type: 'CLEAR_MESSAGE' }
+
+function tableReducer(state: TableState, action: TableAction): TableState {
+  switch (action.type) {
+    case 'RESET':
+      return { visibleCount: action.count, loadingMore: false, loadCompleteMessage: null, revealRange: null }
+    case 'START_LOADING':
+      return { ...state, loadingMore: true }
+    case 'REVEAL_STEP':
+      return { ...state, visibleCount: action.count }
+    case 'REVEAL_COMPLETE':
+      return { ...state, loadingMore: false, revealRange: { start: action.start, end: action.end } }
+    case 'CLEAR_REVEAL':
+      return { ...state, revealRange: null }
+    case 'LOAD_COMPLETE':
+      return { ...state, loadCompleteMessage: action.message }
+    case 'CLEAR_MESSAGE':
+      return { ...state, loadCompleteMessage: null }
+  }
 }
 
 function Shimmer({ className }: { className: string }) {
@@ -239,10 +274,15 @@ interface SessionTableProps {
 
 export const SessionTable = memo(function SessionTable({ sessions, onDelete }: SessionTableProps) {
   const navigate = useNavigate()
-  const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH_SIZE)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [loadCompleteMessage, setLoadCompleteMessage] = useState<string | null>(null)
-  const [revealRange, setRevealRange] = useState<{ start: number; end: number } | null>(null)
+  const [{ visibleCount, loadingMore, loadCompleteMessage, revealRange }, dispatch] = useReducer(
+    tableReducer,
+    {
+      visibleCount: Math.min(INITIAL_BATCH_SIZE, sessions.length),
+      loadingMore: false,
+      loadCompleteMessage: null,
+      revealRange: null,
+    }
+  )
   const loadTimerRef = useRef<number | null>(null)
   const revealTimerRef = useRef<number | null>(null)
   const revealStepTimerRef = useRef<number | null>(null)
@@ -255,10 +295,7 @@ export const SessionTable = memo(function SessionTable({ sessions, onDelete }: S
   )
 
   useEffect(() => {
-    setVisibleCount(Math.min(INITIAL_BATCH_SIZE, sessions.length))
-    setLoadingMore(false)
-    setLoadCompleteMessage(null)
-    setRevealRange(null)
+    dispatch({ type: 'RESET', count: Math.min(INITIAL_BATCH_SIZE, sessions.length) })
     loadingRef.current = false
 
     if (loadTimerRef.current !== null) {
@@ -305,31 +342,30 @@ export const SessionTable = memo(function SessionTable({ sessions, onDelete }: S
 
     const step = () => {
       nextCount += 1
-      setVisibleCount(nextCount)
+      dispatch({ type: 'REVEAL_STEP', count: nextCount })
 
       if (nextCount < targetCount) {
         revealStepTimerRef.current = window.setTimeout(step, ROW_REVEAL_STEP_MS)
         return
       }
 
-      setRevealRange({ start: startCount, end: targetCount })
+      dispatch({ type: 'REVEAL_COMPLETE', start: startCount, end: targetCount })
       if (revealTimerRef.current !== null) {
         window.clearTimeout(revealTimerRef.current)
       }
       revealTimerRef.current = window.setTimeout(() => {
-        setRevealRange(null)
+        dispatch({ type: 'CLEAR_REVEAL' })
         revealTimerRef.current = null
       }, REVEAL_RESET_MS)
 
-      setLoadingMore(false)
       loadingRef.current = false
       loadTimerRef.current = null
-      setLoadCompleteMessage(`已載入 ${targetCount - startCount} 筆新資料`)
+      dispatch({ type: 'LOAD_COMPLETE', message: `已載入 ${targetCount - startCount} 筆新資料` })
       if (noticeTimerRef.current !== null) {
         window.clearTimeout(noticeTimerRef.current)
       }
       noticeTimerRef.current = window.setTimeout(() => {
-        setLoadCompleteMessage(null)
+        dispatch({ type: 'CLEAR_MESSAGE' })
         noticeTimerRef.current = null
       }, 1800)
     }
@@ -342,7 +378,7 @@ export const SessionTable = memo(function SessionTable({ sessions, onDelete }: S
     if (visibleStopIndex < visibleSessions.length - LOAD_MORE_THRESHOLD) return
 
     loadingRef.current = true
-    setLoadingMore(true)
+    dispatch({ type: 'START_LOADING' })
 
     loadTimerRef.current = window.setTimeout(() => {
       const startCount = visibleCount
